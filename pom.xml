@@ -6,7 +6,7 @@
   <parent>
     <groupId>io.smallrye</groupId>
     <artifactId>smallrye-parent</artifactId>
-    <version>31</version>
+    <version>32</version>
   </parent>
 
   <groupId>io.smallrye.reactive</groupId>
@@ -69,7 +69,7 @@
     <microprofile-metrics-api.version>3.0</microprofile-metrics-api.version>
     <microprofile-health-api.version>3.1</microprofile-health-api.version>
 
-    <smallrye-config.version>2.5.1</smallrye-config.version>
+    <smallrye-config.version>2.6.0</smallrye-config.version>
     <smallrye-metrics.version>3.0.3</smallrye-metrics.version>
     <smallrye-common.version>1.8.0</smallrye-common.version>
     <smallrye-health.version>3.1.1</smallrye-health.version>
@@ -77,7 +77,7 @@
     <smallrye-fault-tolerance.version>5.2.1</smallrye-fault-tolerance.version>
 
     <mutiny.version>0.18.1</mutiny.version>
-    <artemis.version>2.18.0</artemis.version>
+    <artemis.version>2.19.0</artemis.version>
 
     <jboss-log-manager.version>2.1.18.Final</jboss-log-manager.version>
 
@@ -89,7 +89,7 @@
     <smallrye-vertx-mutiny-clients.version>2.11.0</smallrye-vertx-mutiny-clients.version>
     <smallrye-reactive-converters.version>2.6.0</smallrye-reactive-converters.version>
 
-    <testcontainers.version>1.16.0</testcontainers.version>
+    <testcontainers.version>1.16.1</testcontainers.version>
 
     <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/target/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
     <mockito.version>4.0.0</mockito.version>
