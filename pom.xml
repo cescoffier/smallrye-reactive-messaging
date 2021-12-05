@@ -11,7 +11,7 @@
 
   <groupId>io.smallrye.reactive</groupId>
   <artifactId>smallrye-reactive-messaging</artifactId>
-  <version>3.12.0-SNAPSHOT</version>
+  <version>3.14.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>SmallRye Reactive Messaging</name>
@@ -69,7 +69,7 @@
     <microprofile-metrics-api.version>3.0</microprofile-metrics-api.version>
     <microprofile-health-api.version>3.1</microprofile-health-api.version>
 
-    <smallrye-config.version>2.6.1</smallrye-config.version>
+    <smallrye-config.version>2.7.0</smallrye-config.version>
     <smallrye-metrics.version>3.0.4</smallrye-metrics.version>
     <smallrye-common.version>1.8.0</smallrye-common.version>
     <smallrye-health.version>3.1.2</smallrye-health.version>
@@ -83,10 +83,10 @@
 
     <jboss-log-manager.version>2.1.18.Final</jboss-log-manager.version>
 
-    <kafka.version>2.8.0</kafka.version>
+    <kafka.version>3.0.0</kafka.version>
 
-    <opentelemetry.version>1.9.0</opentelemetry.version>
-    <opentelemetry-semver.version>1.9.0-alpha</opentelemetry-semver.version>
+    <opentelemetry.version>1.9.1</opentelemetry.version>
+    <opentelemetry-semver.version>1.9.1-alpha</opentelemetry-semver.version>
 
     <smallrye-vertx-mutiny-clients.version>2.15.1</smallrye-vertx-mutiny-clients.version>
     <smallrye-reactive-converters.version>2.6.0</smallrye-reactive-converters.version>
@@ -96,7 +96,7 @@
     <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/target/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
     <mockito.version>4.1.0</mockito.version>
     <junit-pioneer.version>1.5.0</junit-pioneer.version>
-    <junit-platform-commons.version>1.8.1</junit-platform-commons.version>
+    <junit-platform-commons.version>1.8.2</junit-platform-commons.version>
 
     <jackson.version>2.13.0</jackson.version>
     <yasson.version>1.0.8</yasson.version>
