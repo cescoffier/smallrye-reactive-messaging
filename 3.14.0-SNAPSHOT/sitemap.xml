@@ -11,6 +11,36 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://smallrye.io/smallrye-reactive-messaging/3.14.0-SNAPSHOT/amqp/amqp/</loc>
+         <lastmod>2021-12-21</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://smallrye.io/smallrye-reactive-messaging/3.14.0-SNAPSHOT/amqp/client-customization/</loc>
+         <lastmod>2021-12-21</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://smallrye.io/smallrye-reactive-messaging/3.14.0-SNAPSHOT/amqp/health/</loc>
+         <lastmod>2021-12-21</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://smallrye.io/smallrye-reactive-messaging/3.14.0-SNAPSHOT/amqp/rabbitmq/</loc>
+         <lastmod>2021-12-21</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://smallrye.io/smallrye-reactive-messaging/3.14.0-SNAPSHOT/amqp/receiving-amqp-messages/</loc>
+         <lastmod>2021-12-21</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://smallrye.io/smallrye-reactive-messaging/3.14.0-SNAPSHOT/amqp/sending-amqp-messages/</loc>
+         <lastmod>2021-12-21</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://smallrye.io/smallrye-reactive-messaging/3.14.0-SNAPSHOT/camel/camel-processor/</loc>
          <lastmod>2021-12-21</lastmod>
          <changefreq>daily</changefreq>
@@ -127,6 +157,56 @@
     </url>
     <url>
          <loc>https://smallrye.io/smallrye-reactive-messaging/3.14.0-SNAPSHOT/jms/sending-jms-messages/</loc>
+         <lastmod>2021-12-21</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://smallrye.io/smallrye-reactive-messaging/3.14.0-SNAPSHOT/kafka/avro-configuration/</loc>
+         <lastmod>2021-12-21</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://smallrye.io/smallrye-reactive-messaging/3.14.0-SNAPSHOT/kafka/client-service/</loc>
+         <lastmod>2021-12-21</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://smallrye.io/smallrye-reactive-messaging/3.14.0-SNAPSHOT/kafka/consumer-rebalance-listener/</loc>
+         <lastmod>2021-12-21</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://smallrye.io/smallrye-reactive-messaging/3.14.0-SNAPSHOT/kafka/default-configuration/</loc>
+         <lastmod>2021-12-21</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://smallrye.io/smallrye-reactive-messaging/3.14.0-SNAPSHOT/kafka/health/</loc>
+         <lastmod>2021-12-21</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://smallrye.io/smallrye-reactive-messaging/3.14.0-SNAPSHOT/kafka/kafka/</loc>
+         <lastmod>2021-12-21</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://smallrye.io/smallrye-reactive-messaging/3.14.0-SNAPSHOT/kafka/kerberos/</loc>
+         <lastmod>2021-12-21</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://smallrye.io/smallrye-reactive-messaging/3.14.0-SNAPSHOT/kafka/protobuf-configuration/</loc>
+         <lastmod>2021-12-21</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://smallrye.io/smallrye-reactive-messaging/3.14.0-SNAPSHOT/kafka/receiving-kafka-records/</loc>
+         <lastmod>2021-12-21</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://smallrye.io/smallrye-reactive-messaging/3.14.0-SNAPSHOT/kafka/writing-kafka-records/</loc>
          <lastmod>2021-12-21</lastmod>
          <changefreq>daily</changefreq>
     </url>
