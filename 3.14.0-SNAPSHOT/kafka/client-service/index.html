@@ -1394,7 +1394,7 @@ more details. That is why SmallRye Reactive Messaging uses a dedicated
 thread to run the send operations as well.</p>
 <p>Sometimes, SmallRye Reactive Messaging provides direct access to the
 Kafka <code>Producer</code> or <code>Consumer</code>. For example, a
-<a href="#kafka-consumer-rebalance-listener"><code>KafkaConsumerRebalanceListener</code></a>
+<a href="../consumer-rebalance-listener/"><code>KafkaConsumerRebalanceListener</code></a>
 methods are always invoked on the polling thread, so they give you
 direct access to <code>Consumer</code>. In such case, you should use the
 <code>Producer</code>/<code>Consumer</code> API directly, instead of the
