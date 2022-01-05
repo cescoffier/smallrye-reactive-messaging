@@ -12,7 +12,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.reactive.messaging.Incoming;
@@ -50,7 +50,7 @@ public class TracingAmqpToAppWithParentTest extends AmqpBrokerTestBase {
     private SpanProcessor spanProcessor;
 
     private WeldContainer container;
-    private final Weld weld = new Weld();
+    private final Weld weld = BaseWeld.getWeld();
 
     @BeforeEach
     public void setup() {

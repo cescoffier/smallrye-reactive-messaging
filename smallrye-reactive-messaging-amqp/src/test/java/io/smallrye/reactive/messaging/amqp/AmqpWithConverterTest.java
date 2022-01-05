@@ -11,9 +11,8 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.se.SeContainer;
-import javax.enterprise.inject.se.SeContainerInitializer;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.se.SeContainer;
 
 import org.apache.qpid.proton.Proton;
 import org.apache.qpid.proton.amqp.messaging.Accepted;
@@ -55,7 +54,7 @@ public class AmqpWithConverterTest extends AmqpTestBase {
 
         server = setupMockServer(msgCount, dispositionsReceived, executionHolder.vertx().getDelegate());
 
-        SeContainerInitializer weld = Weld.newInstance();
+        Weld weld = BaseWeld.getWeld();
         new MapBasedConfig()
                 .with("mp.messaging.incoming.in.connector", AmqpConnector.CONNECTOR_NAME)
                 .with("mp.messaging.incoming.in.host", "localhost")

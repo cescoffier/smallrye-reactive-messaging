@@ -1,9 +1,12 @@
 package io.smallrye.reactive.messaging.providers.helpers;
 
+import jakarta.enterprise.inject.Vetoed;
+
 import org.eclipse.microprofile.reactive.messaging.Message;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
+@Vetoed
 public class IgnoringSubscriber implements Subscriber<Message<?>> {
 
     public static final Subscriber<Message<?>> INSTANCE = new IgnoringSubscriber();

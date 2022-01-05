@@ -5,13 +5,13 @@
 
   <parent>
     <groupId>io.smallrye</groupId>
-    <artifactId>smallrye-parent</artifactId>
+    <artifactId>smallrye-jakarta-parent</artifactId>
     <version>34</version>
   </parent>
 
   <groupId>io.smallrye.reactive</groupId>
   <artifactId>smallrye-reactive-messaging</artifactId>
-  <version>3.14.0-SNAPSHOT</version>
+  <version>4.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>SmallRye Reactive Messaging</name>
@@ -57,29 +57,31 @@
 
 
   <properties>
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
+
     <vertx.version>4.2.3</vertx.version>
     <rxjava.version>2.2.21</rxjava.version>
     <cloudevent.version>1.1.0</cloudevent.version>
-    <weld.version>3.1.8.Final</weld.version>
     <camel.version>3.14.0</camel.version>
 
-    <microprofile-reactive-messaging.version>2.0.1</microprofile-reactive-messaging.version>
+    <microprofile-reactive-messaging.version>3.0-SNAPSHOT</microprofile-reactive-messaging.version>
     <microprofile-reactive-streams.version>2.0</microprofile-reactive-streams.version>
-    <microprofile-config.version>2.0</microprofile-config.version>
+    <microprofile-config.version>3.0.1</microprofile-config.version>
     <microprofile-metrics-api.version>3.0</microprofile-metrics-api.version>
-    <microprofile-health-api.version>3.1</microprofile-health-api.version>
+    <microprofile-health-api.version>4.0</microprofile-health-api.version>
 
-    <smallrye-config.version>2.8.1</smallrye-config.version>
+    <smallrye-config.version>3.0.0-RC1</smallrye-config.version>
     <smallrye-metrics.version>3.0.4</smallrye-metrics.version>
     <smallrye-common.version>1.8.0</smallrye-common.version>
-    <smallrye-health.version>3.1.2</smallrye-health.version>
+    <smallrye-health.version>4.0.0-RC1</smallrye-health.version>
     <smallrye-testing.version>1.0.0</smallrye-testing.version>
     <smallrye-fault-tolerance.version>5.2.1</smallrye-fault-tolerance.version>
 
     <micrometer.version>1.8.1</micrometer.version>
 
-    <mutiny.version>1.1.2</mutiny.version>
-    <artemis.version>2.19.0</artemis.version>
+    <mutiny.version>1.2.0</mutiny.version>
+    <artemis.version>2.20.0</artemis.version>
 
     <jboss-log-manager.version>2.1.18.Final</jboss-log-manager.version>
 
@@ -99,11 +101,12 @@
     <junit-platform-commons.version>1.8.2</junit-platform-commons.version>
 
     <jackson.version>2.13.1</jackson.version>
-    <yasson.version>1.0.8</yasson.version>
+    <yasson.version>2.0.3</yasson.version>
 
     <jandex-maven-plugin.version>1.2.1</jandex-maven-plugin.version>
 
     <nats-embedded.version>1.1.2</nats-embedded.version>
+    <weld-se-core.version>4.0.2.Final</weld-se-core.version>
   </properties>
 
   <modules>
@@ -113,7 +116,8 @@
     <module>smallrye-reactive-messaging-kafka</module>
     <module>smallrye-reactive-messaging-kafka-api</module>
     <module>smallrye-reactive-messaging-mqtt</module>
-    <module>smallrye-reactive-messaging-camel</module>
+    <!-- Must wait until camel-cdi switches to Jakarta -->
+<!--    <module>smallrye-reactive-messaging-camel</module>-->
     <module>smallrye-reactive-messaging-amqp</module>
     <module>smallrye-reactive-messaging-jms</module>
     <module>smallrye-reactive-messaging-jsonb</module>
@@ -121,6 +125,7 @@
     <module>smallrye-reactive-messaging-health</module>
     <module>smallrye-reactive-messaging-rabbitmq</module>
     <module>smallrye-reactive-messaging-gcp-pubsub</module>
+
     <module>examples/quickstart</module>
     <module>examples/kafka-quickstart</module>
     <module>examples/kafka-quickstart-kotlin</module>
@@ -130,7 +135,6 @@
     <module>smallrye-connector-attribute-processor</module>
 
     <module>test-common</module>
-    <module>tck</module>
     <module>documentation</module>
   </modules>
 
@@ -184,11 +188,6 @@
         <groupId>io.smallrye.config</groupId>
         <artifactId>smallrye-config</artifactId>
         <version>${smallrye-config.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.smallrye.common</groupId>
-        <artifactId>smallrye-common-annotation</artifactId>
-        <version>${smallrye-common.version}</version>
       </dependency>
       <dependency>
         <groupId>io.smallrye.testing</groupId>
@@ -264,11 +263,26 @@
         <scope>test</scope>
       </dependency>
 
+      <!-- Jakarta update from SmallRye -->
+      <dependency>
+        <groupId>io.smallrye.common</groupId>
+        <artifactId>smallrye-common-annotation</artifactId>
+        <version>2.0.0-RC1</version>
+      </dependency>
+
       <!-- From this project -->
       <dependency>
         <groupId>io.smallrye.reactive</groupId>
         <artifactId>smallrye-reactive-messaging-api</artifactId>
         <version>${project.version}</version>
+      </dependency>
+
+
+      <dependency>
+        <groupId>org.jboss.weld.se</groupId>
+        <artifactId>weld-se-core</artifactId>
+        <version>${weld-se-core.version}</version>
+        <scope>test</scope>
       </dependency>
 
       <dependency>
@@ -310,13 +324,21 @@
     <dependency>
       <groupId>org.jboss.weld.se</groupId>
       <artifactId>weld-se-core</artifactId>
-      <version>${weld.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.weld</groupId>
+      <artifactId>weld-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.weld</groupId>
+      <artifactId>weld-spi</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.weld</groupId>
       <artifactId>weld-core-impl</artifactId>
-      <version>${weld.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -529,6 +551,14 @@
           </plugin>
         </plugins>
       </build>
+    </profile>
+
+    <profile>
+      <!-- Temporary profile until the TCK got released -->
+      <id>tck</id>
+      <modules>
+        <module>tck</module>
+      </modules>
     </profile>
 
     <profile>

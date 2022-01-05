@@ -19,14 +19,9 @@ import io.smallrye.reactive.messaging.test.common.config.MapBasedConfig;
 public class AmqpSinkCDIConfigTest extends AmqpBrokerTestBase {
 
     private WeldContainer container;
-    private AmqpConnector provider;
 
     @AfterEach
     public void cleanup() {
-        if (provider != null) {
-            provider.terminate(null);
-        }
-
         if (container != null) {
             container.shutdown();
         }
@@ -41,7 +36,19 @@ public class AmqpSinkCDIConfigTest extends AmqpBrokerTestBase {
 
     @Test
     public void testConfigByCDIMissingBean() {
-        Weld weld = new Weld();
+        Weld weld = BaseWeld.getWeld();
+        //        weld.disableDiscovery();
+        //        weld.addBeanClass(MediatorFactory.class);
+        //        weld.addBeanClass(MediatorManager.class);
+        //        weld.addBeanClass(InternalChannelRegistry.class);
+        //        weld.addBeanClass(ConnectorFactories.class);
+        //        weld.addBeanClass(ConfiguredChannelFactory.class);
+        //        weld.addBeanClass(WorkerPoolRegistry.class);
+        //        weld.addBeanClass(ExecutionHolder.class);
+        //        weld.addBeanClass(Wiring.class);
+        //        weld.addPackages(EmitterImpl.class.getPackage());
+        //        weld.addExtension(new ReactiveMessagingExtension());
+        //        weld.addBeanClass(AmqpConnector.class);
 
         weld.addBeanClass(ProducingBean.class);
 
@@ -62,7 +69,7 @@ public class AmqpSinkCDIConfigTest extends AmqpBrokerTestBase {
 
     @Test
     public void testConfigByCDIIncorrectBean() {
-        Weld weld = new Weld();
+        Weld weld = BaseWeld.getWeld();
 
         weld.addBeanClass(ProducingBean.class);
         weld.addBeanClass(ClientConfigurationBean.class);
@@ -83,7 +90,7 @@ public class AmqpSinkCDIConfigTest extends AmqpBrokerTestBase {
 
     @Test
     public void testConfigByCDICorrect() throws InterruptedException {
-        Weld weld = new Weld();
+        Weld weld = BaseWeld.getWeld();
 
         CountDownLatch latch = new CountDownLatch(10);
         usage.consumeIntegers("sink",
@@ -112,7 +119,7 @@ public class AmqpSinkCDIConfigTest extends AmqpBrokerTestBase {
     @Test
     @Disabled("Failing on CI - need to be investigated")
     public void testConfigGlobalOptionsByCDIMissingBean() {
-        Weld weld = new Weld();
+        Weld weld = BaseWeld.getWeld();
 
         weld.addBeanClass(ProducingBean.class);
 
@@ -135,7 +142,7 @@ public class AmqpSinkCDIConfigTest extends AmqpBrokerTestBase {
     @Test
     @Disabled("Failing on CI - to be investigated")
     public void testConfigGlobalOptionsByCDIIncorrectBean() {
-        Weld weld = new Weld();
+        Weld weld = BaseWeld.getWeld();
 
         weld.addBeanClass(ProducingBean.class);
         weld.addBeanClass(ClientConfigurationBean.class);
@@ -159,7 +166,7 @@ public class AmqpSinkCDIConfigTest extends AmqpBrokerTestBase {
 
     @Test
     public void testConfigGlobalOptionsByCDICorrect() throws InterruptedException {
-        Weld weld = new Weld();
+        Weld weld = BaseWeld.getWeld();
 
         CountDownLatch latch = new CountDownLatch(10);
         usage.consumeIntegers("sink",

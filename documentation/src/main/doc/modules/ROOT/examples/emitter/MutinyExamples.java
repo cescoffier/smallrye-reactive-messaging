@@ -5,7 +5,7 @@ import io.smallrye.mutiny.subscription.Cancellable;
 import io.smallrye.reactive.messaging.MutinyEmitter;
 import org.eclipse.microprofile.reactive.messaging.Channel;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 public class MutinyExamples {
     // tag::uni[]

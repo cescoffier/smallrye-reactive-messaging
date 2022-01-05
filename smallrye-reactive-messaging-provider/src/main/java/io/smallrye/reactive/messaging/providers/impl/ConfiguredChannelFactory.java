@@ -8,10 +8,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Any;
+import jakarta.enterprise.inject.Instance;
+import jakarta.inject.Inject;
 
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.reactive.messaging.Message;
@@ -110,7 +110,7 @@ public class ConfiguredChannelFactory implements ChannelRegistar {
 
     /**
      * By spec, you cannot use the same channel name in an `incoming` configuration and `outgoing` configuration.
-     * This method throws a {@link javax.enterprise.inject.spi.DeploymentException} is this case is detected.
+     * This method throws a {@link jakarta.enterprise.inject.spi.DeploymentException} is this case is detected.
      *
      * @param sourceConfiguration the source configurations
      * @param sinkConfiguration the sink configurations

@@ -3,7 +3,7 @@ package converters;
 import io.smallrye.reactive.messaging.MessageConverter;
 import org.eclipse.microprofile.reactive.messaging.Message;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.lang.reflect.Type;
 
 // tag::code[]

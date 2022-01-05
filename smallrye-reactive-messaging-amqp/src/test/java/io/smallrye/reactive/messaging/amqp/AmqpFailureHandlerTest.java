@@ -11,7 +11,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import org.apache.qpid.proton.Proton;
 import org.apache.qpid.proton.amqp.messaging.Accepted;
@@ -50,7 +50,7 @@ public class AmqpFailureHandlerTest extends AmqpTestBase {
     }
 
     private MyReceiverBean deploy() {
-        Weld weld = new Weld();
+        Weld weld = BaseWeld.getWeld();
         weld.addBeanClass(MyReceiverBean.class);
 
         container = weld.initialize();
@@ -58,7 +58,7 @@ public class AmqpFailureHandlerTest extends AmqpTestBase {
     }
 
     private MyReceiverBeanRecovering deployRecovering() {
-        Weld weld = new Weld();
+        Weld weld = BaseWeld.getWeld();
         weld.addBeanClass(MyReceiverBeanRecovering.class);
 
         container = weld.initialize();

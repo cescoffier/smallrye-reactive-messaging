@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import org.apache.qpid.proton.Proton;
 import org.apache.qpid.proton.amqp.messaging.Accepted;
@@ -64,7 +64,7 @@ public class AmqpLinkTest extends AmqpTestBase {
         AtomicReference<ProtonSender> senderRef = new AtomicReference<>();
         server = setupMockServer(connectionRef, senderRef, dispositionsReceived, executionHolder.vertx().getDelegate());
 
-        Weld weld = new Weld();
+        Weld weld = BaseWeld.getWeld();
 
         weld.addBeanClass(MyConsumer.class);
 

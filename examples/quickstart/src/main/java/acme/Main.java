@@ -1,7 +1,8 @@
 package acme;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.se.SeContainerInitializer;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.se.SeContainer;
+import jakarta.enterprise.inject.se.SeContainerInitializer;
 
 import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.eclipse.microprofile.reactive.messaging.Outgoing;
@@ -12,7 +13,7 @@ import org.eclipse.microprofile.reactive.streams.operators.ReactiveStreams;
 public class Main {
 
     public static void main(String[] args) {
-        SeContainerInitializer.newInstance().initialize();
+        SeContainer container = SeContainerInitializer.newInstance().initialize();
     }
 
     @Outgoing("source")

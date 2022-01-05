@@ -1,7 +1,7 @@
 package quickstart;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.se.SeContainerInitializer;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.se.SeContainerInitializer;
 
 @ApplicationScoped
 public class Main {

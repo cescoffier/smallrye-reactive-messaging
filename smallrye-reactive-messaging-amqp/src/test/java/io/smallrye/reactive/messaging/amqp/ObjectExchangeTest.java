@@ -6,8 +6,8 @@ import static org.awaitility.Awaitility.await;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.reactive.messaging.Channel;
@@ -25,7 +25,7 @@ import io.vertx.core.json.JsonObject;
 public class ObjectExchangeTest extends AmqpBrokerTestBase {
 
     private WeldContainer container;
-    private final Weld weld = new Weld();
+    private final Weld weld = BaseWeld.getWeld();
 
     @AfterEach
     public void cleanup() {

@@ -562,7 +562,7 @@ public class AmqpSinkTest extends AmqpTestBase {
 
         server = setupMockServerForTypeTest(messagesReceived, msgsReceived, attachAddress);
 
-        Weld weld = new Weld();
+        Weld weld = BaseWeld.getWeld();
         weld.addBeanClass(ProducingBean.class);
 
         new MapBasedConfig()
@@ -604,7 +604,7 @@ public class AmqpSinkTest extends AmqpTestBase {
 
         server = setupMockServerForTypeTest(messagesReceived, msgsReceived, attachAddress);
 
-        Weld weld = new Weld();
+        Weld weld = BaseWeld.getWeld();
         weld.addBeanClass(ProducingBeanUsingOutboundMetadata.class);
 
         new MapBasedConfig()
@@ -647,7 +647,7 @@ public class AmqpSinkTest extends AmqpTestBase {
 
         server = setupMockServerForTypeTest(messagesReceived, msgsReceived, attachAddress);
 
-        Weld weld = new Weld();
+        Weld weld = BaseWeld.getWeld();
         weld.addBeanClass(ProducingBeanUsingOutboundMetadata.class);
 
         new MapBasedConfig()

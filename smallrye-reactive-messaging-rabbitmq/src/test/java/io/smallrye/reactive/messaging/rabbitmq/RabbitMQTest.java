@@ -28,7 +28,7 @@ class RabbitMQTest extends RabbitMQBrokerTestBase {
 
     private WeldContainer container;
 
-    Weld weld = new Weld();
+    Weld weld = BaseWeld.getWeld();
 
     @AfterEach
     public void cleanup() {

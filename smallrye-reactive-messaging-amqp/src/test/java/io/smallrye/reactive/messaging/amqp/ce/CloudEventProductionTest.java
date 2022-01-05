@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.reactive.messaging.*;
@@ -25,6 +25,7 @@ import io.smallrye.config.SmallRyeConfigProviderResolver;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.reactive.messaging.amqp.AmqpBrokerTestBase;
 import io.smallrye.reactive.messaging.amqp.AmqpConnector;
+import io.smallrye.reactive.messaging.amqp.BaseWeld;
 import io.smallrye.reactive.messaging.ce.OutgoingCloudEventMetadata;
 import io.smallrye.reactive.messaging.test.common.config.MapBasedConfig;
 import io.vertx.core.json.JsonObject;
@@ -34,7 +35,7 @@ import io.vertx.mutiny.amqp.AmqpMessage;
 public class CloudEventProductionTest extends AmqpBrokerTestBase {
 
     private WeldContainer container;
-    private final Weld weld = new Weld();
+    private final Weld weld = BaseWeld.getWeld();
 
     @AfterEach
     public void cleanup() {

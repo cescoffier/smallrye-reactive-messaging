@@ -44,11 +44,11 @@
 *** xref:amqp:amqp.adoc#amqp-health[Health Check]
 *** xref:amqp:amqp.adoc#amqp-rabbitmq[Connecting with RabbitMQ]
 
-** xref:camel:camel.adoc[Apache Camel]
-*** xref:camel:camel.adoc#camel-installation[Using the connector]
-*** xref:camel:camel.adoc#camel-inbound[Receiving data using Camel]
-*** xref:camel:camel.adoc#camel-outbound[Sending data using Camel]
-*** xref:camel:camel.adoc#camel-api[Using existing routes]
+//** xref:camel:camel.adoc[Apache Camel]
+//*** xref:camel:camel.adoc#camel-installation[Using the connector]
+//*** xref:camel:camel.adoc#camel-inbound[Receiving data using Camel]
+//*** xref:camel:camel.adoc#camel-outbound[Sending data using Camel]
+//*** xref:camel:camel.adoc#camel-api[Using existing routes]
 
 ** xref:jms:jms.adoc[JMS]
 *** xref:jms:jms.adoc#jms-installation[Using the connector]

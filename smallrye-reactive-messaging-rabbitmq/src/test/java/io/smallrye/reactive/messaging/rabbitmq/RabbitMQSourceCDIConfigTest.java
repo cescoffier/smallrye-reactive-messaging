@@ -40,7 +40,7 @@ public class RabbitMQSourceCDIConfigTest extends RabbitMQBrokerTestBase {
 
     @Test
     public void testConfigByCDIMissingBean() {
-        Weld weld = new Weld();
+        Weld weld = BaseWeld.getWeld();
 
         weld.addBeanClass(ConsumptionBean.class);
         weld.addBeanClass(ExecutionHolder.class);
@@ -62,7 +62,7 @@ public class RabbitMQSourceCDIConfigTest extends RabbitMQBrokerTestBase {
 
     @Test
     public void testConfigByCDIIncorrectBean() {
-        Weld weld = new Weld();
+        Weld weld = BaseWeld.getWeld();
 
         weld.addBeanClass(ConsumptionBean.class);
         weld.addBeanClass(ClientConfigurationBean.class);
@@ -85,7 +85,7 @@ public class RabbitMQSourceCDIConfigTest extends RabbitMQBrokerTestBase {
 
     @Test
     public void testConfigByCDICorrect() {
-        Weld weld = new Weld();
+        Weld weld = BaseWeld.getWeld();
 
         weld.addBeanClass(ClientConfigurationBean.class);
         weld.addBeanClass(ConsumptionBean.class);
@@ -116,7 +116,7 @@ public class RabbitMQSourceCDIConfigTest extends RabbitMQBrokerTestBase {
 
     @Test
     public void testConfigGlobalOptionsByCDICorrect() {
-        Weld weld = new Weld();
+        Weld weld = BaseWeld.getWeld();
 
         String queueName = UUID.randomUUID().toString();
         weld.addBeanClass(ClientConfigurationBean.class);
@@ -149,7 +149,7 @@ public class RabbitMQSourceCDIConfigTest extends RabbitMQBrokerTestBase {
 
     @Test
     public void testConfigGlobalOptionsByCDIMissingBean() {
-        Weld weld = new Weld();
+        Weld weld = BaseWeld.getWeld();
 
         weld.addBeanClass(ConsumptionBean.class);
         weld.addBeanClass(ExecutionHolder.class);
@@ -171,7 +171,7 @@ public class RabbitMQSourceCDIConfigTest extends RabbitMQBrokerTestBase {
 
     @Test
     public void testConfigGlobalOptionsByCDIIncorrectBean() {
-        Weld weld = new Weld();
+        Weld weld = BaseWeld.getWeld();
 
         weld.addBeanClass(ConsumptionBean.class);
         weld.addBeanClass(ClientConfigurationBean.class);

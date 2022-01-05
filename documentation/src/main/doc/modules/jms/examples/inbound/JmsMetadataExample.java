@@ -3,7 +3,7 @@ package inbound;
 import io.smallrye.reactive.messaging.jms.IncomingJmsMessageMetadata;
 import org.eclipse.microprofile.reactive.messaging.Message;
 
-import javax.jms.Destination;
+import jakarta.jms.Destination;
 import java.util.Optional;
 
 public class JmsMetadataExample {

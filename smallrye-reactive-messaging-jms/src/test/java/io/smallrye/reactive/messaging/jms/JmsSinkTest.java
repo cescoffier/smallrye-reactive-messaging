@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import javax.jms.*;
+import jakarta.jms.*;
 
 import org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory;
 import org.eclipse.microprofile.reactive.messaging.Message;
@@ -23,7 +23,6 @@ import io.smallrye.reactive.messaging.json.JsonMapping;
 import io.smallrye.reactive.messaging.support.JmsTestBase;
 import io.smallrye.reactive.messaging.test.common.config.MapBasedConfig;
 
-@SuppressWarnings("ConstantConditions")
 public class JmsSinkTest extends JmsTestBase {
 
     private JMSContext jms;
@@ -182,7 +181,6 @@ public class JmsSinkTest extends JmsTestBase {
                 .isInstanceOf(Queue.class);
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Test
     public void testWithReplyToTopic() throws JMSException {
         MapBasedConfig config = new MapBasedConfig()
@@ -217,7 +215,6 @@ public class JmsSinkTest extends JmsTestBase {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Test
     public void testPropagation() throws JMSException {
         MapBasedConfig config = new MapBasedConfig()
@@ -246,7 +243,7 @@ public class JmsSinkTest extends JmsTestBase {
 
         await().until(() -> client.messages.size() >= 1);
         assertThat(acked).isTrue();
-        javax.jms.Message message = client.messages.get(0);
+        jakarta.jms.Message message = client.messages.get(0);
         assertThat(message.getBody(String.class)).isEqualTo("hello");
         assertThat(message.getJMSCorrelationID()).isEqualTo("my-correlation-id");
         assertThat(message.getJMSReplyTo()).isEqualTo(rt);
@@ -257,7 +254,7 @@ public class JmsSinkTest extends JmsTestBase {
 
     private class MyJmsClient {
 
-        private final List<javax.jms.Message> messages = new CopyOnWriteArrayList<>();
+        private final List<jakarta.jms.Message> messages = new CopyOnWriteArrayList<>();
 
         MyJmsClient(Destination destination) {
             JMSConsumer consumer = jms.createConsumer(destination);

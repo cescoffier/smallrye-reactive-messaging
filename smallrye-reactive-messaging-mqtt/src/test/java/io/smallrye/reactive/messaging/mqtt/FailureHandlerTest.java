@@ -10,7 +10,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.reactive.messaging.Incoming;
@@ -36,8 +36,8 @@ public class FailureHandlerTest extends MqttTestBase {
         SmallRyeConfigProviderResolver.instance().releaseConfig(ConfigProvider.getConfig());
     }
 
-    private MyReceiverBean deploy() {
-        Weld weld = new Weld();
+    private MyReceiverBean deploy(MapBasedConfig cfg) {
+        Weld weld = baseWeld(cfg);
         weld.addBeanClass(MyReceiverBean.class);
 
         container = weld.initialize();
@@ -46,8 +46,7 @@ public class FailureHandlerTest extends MqttTestBase {
 
     @Test
     public void testFailStrategy() {
-        getFailConfig();
-        MyReceiverBean bean = deploy();
+        MyReceiverBean bean = deploy(getFailConfig());
         AtomicInteger counter = new AtomicInteger();
 
         MqttConnector connector = container.getBeanManager().createInstance().select(MqttConnector.class,
@@ -63,15 +62,13 @@ public class FailureHandlerTest extends MqttTestBase {
 
     @Test
     public void testIgnoreStrategy() {
-        getIgnoreConfig();
-        MyReceiverBean bean = deploy();
+        MyReceiverBean bean = deploy(getIgnoreConfig());
         AtomicInteger counter = new AtomicInteger();
 
-        MqttConnector connector = container.getBeanManager().createInstance().select(MqttConnector.class,
-                ConnectorLiteral.of(MqttConnector.CONNECTOR_NAME)).get();
-        await().until(connector::isReady);
+        await()
+                .until(() -> container.select(MqttConnector.class, ConnectorLiteral.of("smallrye-mqtt")).get().isReady());
 
-        usage.produceStrings("ignore", 10, null, () -> Integer.toString(counter.getAndIncrement()));
+        usage.produceIntegers("ignore", 10, null, counter::getAndIncrement);
 
         await().atMost(2, TimeUnit.MINUTES).until(() -> bean.list().size() >= 10);
         // All messages should not have been received.
@@ -79,26 +76,25 @@ public class FailureHandlerTest extends MqttTestBase {
 
     }
 
-    private void getFailConfig() {
-        new MapBasedConfig()
-                .put("mp.messaging.incoming.mqtt.topic", "fail")
-                .put("mp.messaging.incoming.mqtt.connector", MqttConnector.CONNECTOR_NAME)
-                .put("mp.messaging.incoming.mqtt.host", address)
-                .put("mp.messaging.incoming.mqtt.port", port)
-                .put("mp.messaging.incoming.mqtt.durable", true)
-                // fail is the default.
-                .write();
+    private MapBasedConfig getFailConfig() {
+        return new MapBasedConfig()
+                .with("mp.messaging.incoming.mqtt.topic", "fail")
+                .with("mp.messaging.incoming.mqtt.connector", MqttConnector.CONNECTOR_NAME)
+                .with("mp.messaging.incoming.mqtt.host", address)
+                .with("mp.messaging.incoming.mqtt.port", port)
+                // fail is the default - so no strategy set
+                .with("mp.messaging.incoming.mqtt.durable", true);
+
     }
 
-    private void getIgnoreConfig() {
-        new MapBasedConfig()
-                .put("mp.messaging.incoming.mqtt.topic", "ignore")
-                .put("mp.messaging.incoming.mqtt.connector", MqttConnector.CONNECTOR_NAME)
-                .put("mp.messaging.incoming.mqtt.host", address)
-                .put("mp.messaging.incoming.mqtt.port", port)
-                .put("mp.messaging.incoming.mqtt.durable", true)
-                .put("mp.messaging.incoming.mqtt.failure-strategy", "ignore")
-                .write();
+    private MapBasedConfig getIgnoreConfig() {
+        return new MapBasedConfig()
+                .with("mp.messaging.incoming.mqtt.topic", "ignore")
+                .with("mp.messaging.incoming.mqtt.connector", MqttConnector.CONNECTOR_NAME)
+                .with("mp.messaging.incoming.mqtt.host", address)
+                .with("mp.messaging.incoming.mqtt.port", port)
+                .with("mp.messaging.incoming.mqtt.durable", true)
+                .with("mp.messaging.incoming.mqtt.failure-strategy", "ignore");
     }
 
     @ApplicationScoped

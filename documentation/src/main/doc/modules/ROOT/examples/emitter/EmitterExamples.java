@@ -4,7 +4,7 @@ import io.smallrye.reactive.messaging.annotations.Broadcast;
 import messages.MyMetadata;
 import org.eclipse.microprofile.reactive.messaging.*;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 

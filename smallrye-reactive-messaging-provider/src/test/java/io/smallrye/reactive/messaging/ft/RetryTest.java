@@ -8,28 +8,27 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import org.eclipse.microprofile.faulttolerance.Asynchronous;
 import org.eclipse.microprofile.faulttolerance.Retry;
 import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.eclipse.microprofile.reactive.messaging.Message;
 import org.eclipse.microprofile.reactive.messaging.Outgoing;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import io.smallrye.faulttolerance.FaultToleranceExtension;
-import io.smallrye.metrics.MetricRegistries;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.reactive.messaging.WeldTestBaseWithoutTails;
 
+@Disabled("wait for FT to switch to Jakarta")
 public class RetryTest extends WeldTestBaseWithoutTails {
 
-    @BeforeEach
-    public void initFaultTolerance() {
-        addExtensionClass(FaultToleranceExtension.class);
-        addBeanClass(MetricRegistries.class);
-    }
+    //    @BeforeEach
+    //    public void initFaultTolerance() {
+    //        addExtensionClass(FaultToleranceExtension.class);
+    //        addBeanClass(MetricRegistries.class);
+    //    }
 
     @Test
     public void testRetryOnPayloadProcessor() {

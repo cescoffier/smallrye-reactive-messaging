@@ -24,7 +24,7 @@ import io.smallrye.reactive.messaging.test.common.config.MapBasedConfig;
 public class AmqpCapabilitiesConfigTest extends AmqpBrokerTestBase {
 
     private WeldContainer container;
-    private final Weld weld = new Weld();
+    private final Weld weld = BaseWeld.getWeld();
 
     @AfterEach
     public void cleanup() {
