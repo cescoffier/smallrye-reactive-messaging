@@ -51,7 +51,6 @@ public class ProcessorMediator extends AbstractMediator {
     public void connectToUpstream(Multi<? extends Message<?>> publisher) {
         assert mapper != null;
         this.publisher = decorate(publisher.plug(m -> mapper.apply(convert(m))));
-
     }
 
     @Override

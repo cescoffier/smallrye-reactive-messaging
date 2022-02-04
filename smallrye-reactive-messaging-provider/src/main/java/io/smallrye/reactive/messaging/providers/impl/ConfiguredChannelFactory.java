@@ -3,16 +3,17 @@ package io.smallrye.reactive.messaging.providers.impl;
 import static io.smallrye.reactive.messaging.providers.i18n.ProviderExceptions.ex;
 import static io.smallrye.reactive.messaging.providers.i18n.ProviderLogging.log;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import io.smallrye.mutiny.Uni;
+import io.vertx.core.Context;
+import io.vertx.core.Vertx;
+import io.vertx.core.impl.ContextInternal;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.reactive.messaging.Message;
 import org.eclipse.microprofile.reactive.messaging.spi.*;
@@ -127,9 +128,9 @@ public class ConfiguredChannelFactory implements ChannelRegistar {
 
     }
 
-    void register(Map<String, ConnectorConfig> sourceConfiguration, Map<String, ConnectorConfig> sinkConfiguration) {
+    void register(Map<String, ConnectorConfig> incomings, Map<String, ConnectorConfig> outgoings) {
         try {
-            for (Map.Entry<String, ConnectorConfig> entry : sourceConfiguration.entrySet()) {
+            for (Map.Entry<String, ConnectorConfig> entry : incomings.entrySet()) {
                 String channel = entry.getKey();
                 ConnectorConfig config = entry.getValue();
                 if (config.getOptionalValue(ConnectorConfig.CHANNEL_ENABLED_PROPERTY, Boolean.TYPE).orElse(true)) {
@@ -140,7 +141,7 @@ public class ConfiguredChannelFactory implements ChannelRegistar {
                 }
             }
 
-            for (Map.Entry<String, ConnectorConfig> entry : sinkConfiguration.entrySet()) {
+            for (Map.Entry<String, ConnectorConfig> entry : outgoings.entrySet()) {
                 String channel = entry.getKey();
                 ConnectorConfig config = entry.getValue();
                 if (config.getOptionalValue(ConnectorConfig.CHANNEL_ENABLED_PROPERTY, Boolean.TYPE).orElse(true)) {
@@ -171,12 +172,28 @@ public class ConfiguredChannelFactory implements ChannelRegistar {
             throw ex.illegalArgumentUnknownConnector(name);
         }
 
-        Publisher<? extends Message<?>> publisher = inboundConnector.getPublisher(config);
+        Multi<? extends Message<?>> publisher = Multi.createFrom().publisher(inboundConnector.getPublisher(config));
 
         for (PublisherDecorator decorator : publisherDecoratorInstance) {
             publisher = decorator.decorate(Multi.createFrom().publisher(publisher), name);
         }
 
+        // Switch to a duplicated context if needed.
+        publisher = publisher
+                // For each message, if we have a Vert.x context, duplicate and run on this context
+                // Otherwise, just emit the message downstream.
+                .onItem().transformToUniAndConcatenate(m -> {
+                    Optional<MessageLocal> metadata = m.getMetadata(MessageLocal.class);
+                    if (metadata.isPresent()) {
+                        return Uni.createFrom().<Message<?>>emitter(emitter -> {
+                            // Create a new context for each message
+                            ContextInternal view = metadata.get().context().duplicate();
+                            view.runOnContext(x -> emitter.complete(m.addMetadata(new MessageLocal(view))));
+                        });
+                    } else {
+                        return Uni.createFrom().item(m);
+                    }
+                });
         return publisher;
     }
 

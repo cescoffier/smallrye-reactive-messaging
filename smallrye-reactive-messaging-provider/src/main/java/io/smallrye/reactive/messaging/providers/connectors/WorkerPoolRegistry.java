@@ -11,6 +11,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Priority;
@@ -23,6 +24,9 @@ import javax.enterprise.inject.spi.AnnotatedMethod;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.inject.Inject;
 
+import io.vertx.core.impl.ContextInternal;
+import io.vertx.mutiny.core.Context;
+import io.vertx.mutiny.core.Vertx;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.eclipse.microprofile.reactive.messaging.Outgoing;
@@ -72,8 +76,29 @@ public class WorkerPoolRegistry {
         Objects.requireNonNull(uni, msg.actionNotProvided());
 
         if (workerName == null) {
+            Context currentContext = Vertx.currentContext();
+            if (currentContext != null) {
+                System.out.println("Execute Blocking from " + currentContext);
+                return currentContext.executeBlocking(Uni.createFrom().deferred(() -> {
+                    return uni;
+                }), ordered);
+            }
+            // No current context, use the Vert.x instance.
             return holder.vertx().executeBlocking(uni, ordered);
         } else {
+            Context currentContext = Vertx.currentContext();
+            if (currentContext != null) {
+                return getWorker(workerName).executeBlocking(uni, ordered)
+                        .onItemOrFailure().transformToUni((item, failure) -> {
+                            return Uni.createFrom().emitter(emitter -> {
+                               if (failure != null) {
+                                   currentContext.runOnContext(() -> emitter.fail(failure));
+                               } else {
+                                   currentContext.runOnContext(() -> emitter.complete(item));
+                               }
+                            });
+                        });
+            }
             return getWorker(workerName).executeBlocking(uni, ordered);
         }
     }
