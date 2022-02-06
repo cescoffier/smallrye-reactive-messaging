@@ -183,11 +183,11 @@ public class ConfiguredChannelFactory implements ChannelRegistar {
                 // For each message, if we have a Vert.x context, duplicate and run on this context
                 // Otherwise, just emit the message downstream.
                 .onItem().transformToUniAndConcatenate(m -> {
-                    Optional<MessageLocal> metadata = m.getMetadata(MessageLocal.class);
-                    if (metadata.isPresent()) {
+                    ContextInternal ci = (ContextInternal) Vertx.currentContext();
+                    if (ci != null) {
                         return Uni.createFrom().<Message<?>>emitter(emitter -> {
                             // Create a new context for each message
-                            ContextInternal view = metadata.get().context().duplicate();
+                            ContextInternal view = ci.duplicate();
                             view.runOnContext(x -> emitter.complete(m.addMetadata(new MessageLocal(view))));
                         });
                     } else {

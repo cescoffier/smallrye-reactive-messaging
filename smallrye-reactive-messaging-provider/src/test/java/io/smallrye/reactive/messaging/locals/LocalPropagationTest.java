@@ -7,6 +7,7 @@ import io.smallrye.reactive.messaging.annotations.Blocking;
 import io.smallrye.reactive.messaging.connector.InboundConnector;
 import io.smallrye.reactive.messaging.providers.ContextDecorator;
 import io.smallrye.reactive.messaging.providers.connectors.ExecutionHolder;
+import io.smallrye.reactive.messaging.providers.impl.MessageLocal;
 import io.vertx.core.impl.ConcurrentHashSet;
 import io.vertx.core.impl.ContextInternal;
 import io.vertx.mutiny.core.Context;
@@ -124,7 +125,7 @@ public class LocalPropagationTest extends WeldTestBaseWithoutTails {
             Vertx.currentContext().putLocal("input", input.getPayload());
 
             System.out.println("received " + input.getPayload() + " --> " + value + " on " + Vertx.currentContext());
-            return Message.of(input.getPayload() + 1, input::ack);
+            return input.withPayload(input.getPayload() + 1);
         }
 
 
@@ -184,8 +185,10 @@ public class LocalPropagationTest extends WeldTestBaseWithoutTails {
             Vertx.currentContext().putLocal("uuid", value);
             Vertx.currentContext().putLocal("input", input.getPayload());
 
+            assertThat(input.getMetadata(MessageLocal.class)).isPresent();
+
             System.out.println("process: " + input.getPayload() + " --> " + value + " on " + Vertx.currentContext());
-            return Message.of(input.getPayload() + 1, input::ack);
+            return input.withPayload(input.getPayload() + 1);
         }
 
         @Incoming("process")
