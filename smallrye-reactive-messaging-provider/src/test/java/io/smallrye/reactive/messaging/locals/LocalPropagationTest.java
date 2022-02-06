@@ -72,10 +72,10 @@ public class LocalPropagationTest extends WeldTestBaseWithoutTails {
 
         PipelineWithAnUnorderedBlockingStage bean = get(PipelineWithAnUnorderedBlockingStage.class);
         await().atMost(2, TimeUnit.MINUTES).until(() -> bean.getResults().size() >= 5);
-        assertThat(bean.getResults()).containsExactly(2, 3, 4, 5, 6);
+        assertThat(bean.getResults()).containsExactlyInAnyOrder(2, 3, 4, 5, 6);
 
     }
-    
+
     // Test multiple blocking
 
     // Test broadcast
