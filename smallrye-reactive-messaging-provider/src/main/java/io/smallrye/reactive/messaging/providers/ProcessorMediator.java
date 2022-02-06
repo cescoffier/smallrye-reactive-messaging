@@ -9,6 +9,7 @@ import java.util.Objects;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
 
+import io.smallrye.reactive.messaging.providers.impl.MessageLocal;
 import org.eclipse.microprofile.reactive.messaging.Acknowledgment;
 import org.eclipse.microprofile.reactive.messaging.Message;
 import org.eclipse.microprofile.reactive.streams.operators.ProcessorBuilder;
@@ -64,8 +65,8 @@ public class ProcessorMediator extends AbstractMediator {
     }
 
     @Override
-    protected <T> Uni<T> invokeBlocking(Object... args) {
-        return super.invokeBlocking(args);
+    protected <T> Uni<T> invokeBlocking(Message<?> message, Object... args) {
+        return super.invokeBlocking(message, args);
     }
 
     @Override
@@ -256,7 +257,7 @@ public class ProcessorMediator extends AbstractMediator {
                 this.mapper = upstream -> {
                     Multi<? extends Message<?>> multi = MultiUtils.handlePreProcessingAcknowledgement(upstream, configuration);
                     return multi
-                            .onItem().transformToMultiAndConcatenate(message -> invokeBlocking(withPayloadOrMessage(message))
+                            .onItem().transformToMultiAndConcatenate(message -> invokeBlocking(message, withPayloadOrMessage(message))
                                     .onItemOrFailure()
                                     .transformToUni((o, t) -> this.handlePostInvocationWithMessage((Message<?>) o, t))
                                     .onItem().transformToMulti(this::handleSkip));
@@ -265,7 +266,7 @@ public class ProcessorMediator extends AbstractMediator {
                 this.mapper = upstream -> {
                     Multi<? extends Message<?>> multi = MultiUtils.handlePreProcessingAcknowledgement(upstream, configuration);
                     return multi
-                            .onItem().transformToMultiAndMerge(message -> invokeBlocking(withPayloadOrMessage(message))
+                            .onItem().transformToMultiAndMerge(message -> invokeBlocking(message, withPayloadOrMessage(message))
                                     .onItemOrFailure()
                                     .transformToUni((o, t) -> this.handlePostInvocationWithMessage((Message<?>) o, t))
                                     .onItem().transformToMulti(this::handleSkip));
@@ -277,7 +278,7 @@ public class ProcessorMediator extends AbstractMediator {
                 Multi<? extends Message<?>> multi = MultiUtils.handlePreProcessingAcknowledgement(upstream, configuration);
                 return multi
                         .onItem().transformToMultiAndConcatenate(
-                                message -> Uni.createFrom().item(() -> invoke(withPayloadOrMessage(message)))
+                                message -> MessageLocal.invokeOnMessageContext(message, m -> invoke(withPayloadOrMessage(m)))
                                         .onItem().transform(o -> (Message<?>) o)
                                         .onItemOrFailure().transformToUni(this::handlePostInvocationWithMessage)
                                         .onItem().transformToMulti(this::handleSkip));
@@ -294,12 +295,12 @@ public class ProcessorMediator extends AbstractMediator {
         if (configuration.isBlocking()) {
             if (configuration.isBlockingExecutionOrdered()) {
                 this.mapper = upstream -> MultiUtils.handlePreProcessingAcknowledgement(upstream, configuration)
-                        .onItem().transformToMultiAndConcatenate(message -> invokeBlocking(withPayloadOrMessage(message))
+                        .onItem().transformToMultiAndConcatenate(message -> invokeBlocking(message, withPayloadOrMessage(message))
                                 .onItemOrFailure().transformToUni((r, f) -> handlePostInvocation(message, r, f))
                                 .onItem().transformToMulti(this::handleSkip));
             } else {
                 this.mapper = upstream -> MultiUtils.handlePreProcessingAcknowledgement(upstream, configuration)
-                        .onItem().transformToMultiAndMerge(message -> invokeBlocking(withPayloadOrMessage(message))
+                        .onItem().transformToMultiAndMerge(message -> invokeBlocking(message, withPayloadOrMessage(message))
                                 .onItemOrFailure().transformToUni((r, f) -> handlePostInvocation(message, r, f))
                                 .onItem().transformToMulti(this::handleSkip));
             }

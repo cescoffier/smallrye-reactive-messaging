@@ -11,7 +11,7 @@ import java.util.function.Function;
 
 import javax.enterprise.inject.Instance;
 
-import io.vertx.mutiny.core.Vertx;
+import io.smallrye.reactive.messaging.providers.impl.MessageLocal;
 import org.eclipse.microprofile.reactive.messaging.Acknowledgment;
 import org.eclipse.microprofile.reactive.messaging.Message;
 import org.reactivestreams.Subscriber;
@@ -73,7 +73,6 @@ public abstract class AbstractMediator {
             if (this.invoker == null) {
                 this.invoker = args -> {
                     try {
-                        System.out.println("Calling method " + configuration.getMethod().getName() + " on " + Vertx.currentContext());
                         return this.configuration.getMethod().invoke(bean, args);
                     } catch (Exception e) {
                         throw ex.processingException(configuration.methodAsString(), e);
@@ -98,10 +97,10 @@ public abstract class AbstractMediator {
     }
 
     @SuppressWarnings("unchecked")
-    protected <T> Uni<T> invokeBlocking(Object... args) {
+    protected <T> Uni<T> invokeBlocking(Message<?> message, Object... args) {
         try {
             return workerPoolRegistry.executeWork(
-                    Uni.createFrom().emitter(emitter -> {
+                    MessageLocal.invokeOnMessageContext(message, (m, emitter) -> {
                         try {
                             Object result = this.invoker.invoke(args);
                             if (result instanceof CompletionStage) {

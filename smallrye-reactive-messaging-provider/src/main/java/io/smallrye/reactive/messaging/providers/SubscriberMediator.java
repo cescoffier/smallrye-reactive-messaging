@@ -155,13 +155,13 @@ public class SubscriberMediator extends AbstractMediator {
         if (configuration.isBlocking()) {
             if (configuration.isBlockingExecutionOrdered()) {
                 this.function = upstream -> MultiUtils.handlePreProcessingAcknowledgement(upstream, configuration)
-                        .onItem().transformToUniAndConcatenate(msg -> invokeBlocking(msg.getPayload())
+                        .onItem().transformToUniAndConcatenate(msg -> invokeBlocking(msg, msg.getPayload())
                                 .onItemOrFailure().transformToUni(handleInvocationResult(msg)))
                         .onFailure()
                         .invoke(failure -> health.reportApplicationFailure(configuration.methodAsString(), failure));
             } else {
                 this.function = upstream -> MultiUtils.handlePreProcessingAcknowledgement(upstream, configuration)
-                        .onItem().transformToUniAndMerge(msg -> invokeBlocking(msg.getPayload())
+                        .onItem().transformToUniAndMerge(msg -> invokeBlocking(msg, msg.getPayload())
                                 .onItemOrFailure().transformToUni(handleInvocationResult(msg)))
                         .onFailure()
                         .invoke(failure -> health.reportApplicationFailure(configuration.methodAsString(), failure));
@@ -226,9 +226,9 @@ public class SubscriberMediator extends AbstractMediator {
     private Uni<? extends Message<?>> invokeBlockingAndHandleOutcome(boolean invokeWithPayload, Message<?> msg) {
         Uni<?> uni;
         if (invokeWithPayload) {
-            uni = invokeBlocking(msg.getPayload());
+            uni = invokeBlocking(msg, msg.getPayload());
         } else {
-            uni = invokeBlocking(msg);
+            uni = invokeBlocking(msg, msg);
         }
         return uni.onItemOrFailure().transformToUni(handleInvocationResult(msg));
     }
