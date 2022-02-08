@@ -76,7 +76,8 @@ public abstract class AbstractMediator {
                     try {
                         return this.configuration.getMethod().invoke(bean, args);
                     } catch (Exception e) {
-                        System.out.println(Arrays.toString(args) + " vs. " + Arrays.toString(configuration.getMethod().getParameterTypes()));
+                        System.out.println(Arrays.toString(args) + " vs. "
+                                + Arrays.toString(configuration.getMethod().getParameterTypes()));
                         throw ex.processingException(configuration.methodAsString(), e);
                     }
                 };

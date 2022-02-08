@@ -17,15 +17,11 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
 import io.smallrye.mutiny.Multi;
-import io.smallrye.mutiny.Uni;
 import io.smallrye.reactive.messaging.ChannelRegistar;
 import io.smallrye.reactive.messaging.ChannelRegistry;
 import io.smallrye.reactive.messaging.connector.InboundConnector;
 import io.smallrye.reactive.messaging.connector.OutboundConnector;
 import io.smallrye.reactive.messaging.providers.PublisherDecorator;
-import io.smallrye.reactive.messaging.providers.locals.LocalContextMetadata;
-import io.vertx.core.Vertx;
-import io.vertx.core.impl.ContextInternal;
 
 /**
  * Look for stream factories and get instances.
@@ -178,22 +174,6 @@ public class ConfiguredChannelFactory implements ChannelRegistar {
             publisher = decorator.decorate(Multi.createFrom().publisher(publisher), name);
         }
 
-        // Switch to a duplicated context if needed.
-        publisher = publisher
-                // For each message, if we have a Vert.x context, duplicate and run on this context
-                // Otherwise, just emit the message downstream.
-                .onItem().transformToUniAndConcatenate(m -> {
-                    ContextInternal ci = (ContextInternal) Vertx.currentContext();
-                    if (ci != null) {
-                        return Uni.createFrom().<Message<?>> emitter(emitter -> {
-                            // Create a new context for each message
-                            ContextInternal view = ci.duplicate();
-                            view.runOnContext(x -> emitter.complete(m.addMetadata(new LocalContextMetadata(view))));
-                        });
-                    } else {
-                        return Uni.createFrom().item(m);
-                    }
-                });
         return publisher;
     }
 

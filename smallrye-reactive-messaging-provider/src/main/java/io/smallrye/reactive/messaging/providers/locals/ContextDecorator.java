@@ -78,8 +78,17 @@ public class ContextDecorator implements PublisherDecorator {
                         context.runOnContext(ignored -> super.onItem(item));
                     }
                 } else {
-                    // No stored context, immediate call
-                    super.onItem(item);
+                    // No stored context, Switch to a duplicated context if needed.
+                    ContextInternal ci = (ContextInternal) Vertx.currentContext();
+                    if (ci != null) {
+                        ContextInternal view = ci.duplicate();
+                        // Set the duplicate context as root context for failure and completion
+                        ROOT_CONTEXT_UPDATER.compareAndSet(this, null, view.unwrap());
+                        view.runOnContext(ignored -> super.onItem(item.addMetadata(new LocalContextMetadata(view))));
+                    } else {
+                        // Immediate call
+                        super.onItem(item);
+                    }
                 }
             }
 
