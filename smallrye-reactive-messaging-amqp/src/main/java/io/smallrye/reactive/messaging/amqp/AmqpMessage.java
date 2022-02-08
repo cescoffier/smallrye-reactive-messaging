@@ -244,4 +244,10 @@ public class AmqpMessage<T> implements org.eclipse.microprofile.reactive.messagi
     public synchronized void injectTracingMetadata(TracingMetadata tracingMetadata) {
         metadata = metadata.with(tracingMetadata);
     }
+
+    @Override
+    public AmqpMessage<T> addMetadata(Object meta) {
+        metadata = metadata.with(meta);
+        return this;
+    }
 }
