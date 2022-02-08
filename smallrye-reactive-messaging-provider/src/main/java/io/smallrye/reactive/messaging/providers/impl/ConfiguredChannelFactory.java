@@ -10,10 +10,6 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import io.smallrye.mutiny.Uni;
-import io.vertx.core.Context;
-import io.vertx.core.Vertx;
-import io.vertx.core.impl.ContextInternal;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.reactive.messaging.Message;
 import org.eclipse.microprofile.reactive.messaging.spi.*;
@@ -21,11 +17,15 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
 import io.smallrye.mutiny.Multi;
+import io.smallrye.mutiny.Uni;
 import io.smallrye.reactive.messaging.ChannelRegistar;
 import io.smallrye.reactive.messaging.ChannelRegistry;
 import io.smallrye.reactive.messaging.connector.InboundConnector;
 import io.smallrye.reactive.messaging.connector.OutboundConnector;
 import io.smallrye.reactive.messaging.providers.PublisherDecorator;
+import io.smallrye.reactive.messaging.providers.locals.LocalContextMetadata;
+import io.vertx.core.Vertx;
+import io.vertx.core.impl.ContextInternal;
 
 /**
  * Look for stream factories and get instances.
@@ -185,10 +185,10 @@ public class ConfiguredChannelFactory implements ChannelRegistar {
                 .onItem().transformToUniAndConcatenate(m -> {
                     ContextInternal ci = (ContextInternal) Vertx.currentContext();
                     if (ci != null) {
-                        return Uni.createFrom().<Message<?>>emitter(emitter -> {
+                        return Uni.createFrom().<Message<?>> emitter(emitter -> {
                             // Create a new context for each message
                             ContextInternal view = ci.duplicate();
-                            view.runOnContext(x -> emitter.complete(m.addMetadata(new MessageLocal(view))));
+                            view.runOnContext(x -> emitter.complete(m.addMetadata(new LocalContextMetadata(view))));
                         });
                     } else {
                         return Uni.createFrom().item(m);

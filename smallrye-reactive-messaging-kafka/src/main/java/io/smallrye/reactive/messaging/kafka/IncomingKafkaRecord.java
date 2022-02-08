@@ -148,4 +148,10 @@ public class IncomingKafkaRecord<K, T> implements KafkaRecord<K, T> {
     public synchronized void injectTracingMetadata(TracingMetadata tracingMetadata) {
         metadata = metadata.with(tracingMetadata);
     }
+
+    @Override
+    public IncomingKafkaRecord<K, T> addMetadata(Object metadata) {
+        this.metadata = this.metadata.with(metadata);
+        return this;
+    }
 }

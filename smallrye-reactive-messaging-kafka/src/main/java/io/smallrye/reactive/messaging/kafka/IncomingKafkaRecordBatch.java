@@ -23,7 +23,7 @@ import io.smallrye.reactive.messaging.kafka.fault.KafkaFailureHandler;
 
 public class IncomingKafkaRecordBatch<K, T> implements KafkaRecordBatch<K, T> {
 
-    private final Metadata metadata;
+    private Metadata metadata;
     private final List<KafkaRecord<K, T>> incomingRecords;
     private final Map<TopicPartition, KafkaRecord<K, T>> latestOffsetRecords;
 
@@ -95,5 +95,11 @@ public class IncomingKafkaRecordBatch<K, T> implements KafkaRecordBatch<K, T> {
                         .map(record -> Multi.createFrom().completionStage(() -> record.nack(reason, metadata)))
                         .collect(Collectors.toList()))
                 .toUni().subscribeAsCompletionStage();
+    }
+
+    @Override
+    public KafkaRecordBatch<K, T> addMetadata(Object metadata) {
+        this.metadata = this.metadata.with(metadata);
+        return this;
     }
 }
