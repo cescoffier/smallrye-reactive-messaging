@@ -6,8 +6,9 @@ import java.util.function.Supplier;
 import org.eclipse.microprofile.reactive.messaging.Message;
 
 import io.netty.handler.codec.mqtt.MqttQoS;
+import io.smallrye.reactive.messaging.providers.locals.ContextAwareMessage;
 
-public interface MqttMessage<T> extends Message<T> {
+public interface MqttMessage<T> extends ContextAwareMessage<T> {
 
     static <T> MqttMessage<T> of(T payload) {
         return new SendingMqttMessage<>(null, payload, null, false, null);

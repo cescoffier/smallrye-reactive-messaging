@@ -77,7 +77,7 @@ public class IncomingKafkaRecord<K, T> implements KafkaRecord<K, T> {
             meta.add(tracingMetadata);
         }
 
-        this.metadata = Metadata.from(meta);
+        this.metadata = captureContextMetadata(Metadata.from(meta));
         this.onNack = onNack;
         if (payload == null && !payloadSet) {
             this.payload = record.value();
@@ -149,9 +149,4 @@ public class IncomingKafkaRecord<K, T> implements KafkaRecord<K, T> {
         metadata = metadata.with(tracingMetadata);
     }
 
-    @Override
-    public IncomingKafkaRecord<K, T> addMetadata(Object metadata) {
-        this.metadata = this.metadata.with(metadata);
-        return this;
-    }
 }

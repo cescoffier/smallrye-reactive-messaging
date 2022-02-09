@@ -43,7 +43,7 @@ public class OutgoingKafkaRecord<K, T> implements KafkaRecord<K, T> {
             metadata = Metadata.of(kafkaMetadata);
         }
         // Add the deprecated metadata while the two exist side by side
-        this.metadata = Metadata.from(metadata).with(deprecatedMetadata);
+        this.metadata = captureContextMetadata(Metadata.from(metadata).with(deprecatedMetadata));
 
         this.value = value;
         this.ack = ack;

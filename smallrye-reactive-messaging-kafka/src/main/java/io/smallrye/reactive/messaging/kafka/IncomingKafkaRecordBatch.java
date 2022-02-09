@@ -11,7 +11,6 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import io.smallrye.mutiny.Uni;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.common.TopicPartition;
@@ -42,7 +41,7 @@ public class IncomingKafkaRecordBatch<K, T> implements KafkaRecordBatch<K, T> {
         }
         this.incomingRecords = Collections.unmodifiableList(incomingRecords);
         this.latestOffsetRecords = Collections.unmodifiableMap(latestOffsetRecords);
-        this.metadata = Metadata.of(new IncomingKafkaRecordBatchMetadata<>(records));
+        this.metadata = captureContextMetadata(Metadata.of(new IncomingKafkaRecordBatchMetadata<>(records)));
     }
 
     @Override

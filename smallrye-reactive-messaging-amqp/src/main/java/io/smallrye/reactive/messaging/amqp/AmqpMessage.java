@@ -21,11 +21,12 @@ import io.smallrye.reactive.messaging.amqp.ce.AmqpCloudEventHelper;
 import io.smallrye.reactive.messaging.amqp.fault.AmqpFailureHandler;
 import io.smallrye.reactive.messaging.amqp.tracing.HeaderExtractAdapter;
 import io.smallrye.reactive.messaging.ce.CloudEventMetadata;
+import io.smallrye.reactive.messaging.providers.locals.ContextAwareMessage;
 import io.vertx.core.json.JsonObject;
 import io.vertx.mutiny.core.Context;
 import io.vertx.mutiny.core.buffer.Buffer;
 
-public class AmqpMessage<T> implements org.eclipse.microprofile.reactive.messaging.Message<T> {
+public class AmqpMessage<T> implements org.eclipse.microprofile.reactive.messaging.Message<T>, ContextAwareMessage<T> {
 
     protected static final String APPLICATION_JSON = "application/json";
     protected final io.vertx.amqp.AmqpMessage message;
@@ -93,7 +94,7 @@ public class AmqpMessage<T> implements org.eclipse.microprofile.reactive.messagi
             meta.add(tracingMetadata);
         }
 
-        this.metadata = Metadata.from(meta);
+        this.metadata = captureContextMetadata(Metadata.from(meta));
     }
 
     @Override
@@ -245,9 +246,4 @@ public class AmqpMessage<T> implements org.eclipse.microprofile.reactive.messagi
         metadata = metadata.with(tracingMetadata);
     }
 
-    @Override
-    public AmqpMessage<T> addMetadata(Object meta) {
-        metadata = metadata.with(meta);
-        return this;
-    }
 }

@@ -1,165 +1,96 @@
-package io.smallrye.reactive.messaging.locals;
+package io.smallrye.reactive.messaging.kafka.locals;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 
-import org.eclipse.microprofile.config.Config;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.serialization.IntegerDeserializer;
 import org.eclipse.microprofile.reactive.messaging.Acknowledgment;
 import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.eclipse.microprofile.reactive.messaging.Message;
 import org.eclipse.microprofile.reactive.messaging.Outgoing;
-import org.eclipse.microprofile.reactive.messaging.spi.Connector;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.RepeatedTest;
-import org.reactivestreams.Publisher;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import io.smallrye.mutiny.Multi;
-import io.smallrye.mutiny.Uni;
-import io.smallrye.reactive.messaging.WeldTestBaseWithoutTails;
 import io.smallrye.reactive.messaging.annotations.Blocking;
 import io.smallrye.reactive.messaging.annotations.Broadcast;
 import io.smallrye.reactive.messaging.annotations.Merge;
-import io.smallrye.reactive.messaging.connector.InboundConnector;
-import io.smallrye.reactive.messaging.providers.connectors.ExecutionHolder;
-import io.smallrye.reactive.messaging.providers.locals.ContextAwareMessage;
+import io.smallrye.reactive.messaging.kafka.base.KafkaCompanionTestBase;
+import io.smallrye.reactive.messaging.kafka.base.KafkaMapBasedConfig;
 import io.smallrye.reactive.messaging.providers.locals.LocalContextMetadata;
 import io.vertx.core.impl.ConcurrentHashSet;
-import io.vertx.mutiny.core.Context;
 import io.vertx.mutiny.core.Vertx;
 
-public class LocalPropagationTest extends WeldTestBaseWithoutTails {
+public class LocalPropagationTest extends KafkaCompanionTestBase {
 
-    @AfterEach
-    public void cleanup() {
-        releaseConfig();
+    private KafkaMapBasedConfig dataconfig() {
+        return kafkaConfig("mp.messaging.incoming.data")
+                .put("value.deserializer", IntegerDeserializer.class.getName())
+                .put("auto.offset.reset", "earliest")
+                .put("topic", topic);
     }
 
-    @RepeatedTest(100)
+    @BeforeEach
+    void setUp() {
+        companion.produceIntegers().usingGenerator(i -> new ProducerRecord<>(topic, i + 1), 5)
+                .awaitCompletion();
+    }
+
+    @Test
     public void testLinearPipeline() {
-        installConfig("src/test/resources/config/locals.properties");
-        addBeanClass(ConnectorEmittingOnContext.class);
-        addBeanClass(ConnectorEmittingDirectly.class);
-        addBeanClass(LinearPipeline.class);
-        initialize();
-
-        LinearPipeline bean = get(LinearPipeline.class);
-        await().atMost(2, TimeUnit.MINUTES).until(() -> bean.getResults().size() >= 5);
+        LinearPipeline bean = runApplication(dataconfig(), LinearPipeline.class);
+        await().until(() -> bean.getResults().size() >= 5);
         assertThat(bean.getResults()).containsExactly(2, 3, 4, 5, 6);
     }
 
-    @RepeatedTest(100)
-    public void testLinearPipelineNoContext() {
-        installConfig("src/test/resources/config/locals.properties");
-        addBeanClass(ConnectorEmittingOnContext.class);
-        addBeanClass(ConnectorEmittingDirectly.class);
-        addBeanClass(LinearPipelineNoContext.class);
-        initialize();
-
-        LinearPipelineNoContext bean = get(LinearPipelineNoContext.class);
-        await().atMost(2, TimeUnit.MINUTES).until(() -> bean.getResults().size() >= 5);
-        assertThat(bean.getResults()).containsExactly(2, 3, 4, 5, 6);
-    }
-
-    @RepeatedTest(100)
+    @Test
     public void testPipelineWithABlockingStage() {
-        installConfig("src/test/resources/config/locals.properties");
-        addBeanClass(ConnectorEmittingOnContext.class);
-        addBeanClass(ConnectorEmittingDirectly.class);
-        addBeanClass(PipelineWithABlockingStage.class);
-        initialize();
-
-        PipelineWithABlockingStage bean = get(PipelineWithABlockingStage.class);
-        await().atMost(2, TimeUnit.MINUTES).until(() -> bean.getResults().size() >= 5);
+        PipelineWithABlockingStage bean = runApplication(dataconfig(), PipelineWithABlockingStage.class);
+        await().until(() -> bean.getResults().size() >= 5);
         assertThat(bean.getResults()).containsExactly(2, 3, 4, 5, 6);
 
     }
 
-    @RepeatedTest(100)
+    @Test
     public void testPipelineWithAnUnorderedBlockingStage() {
-        installConfig("src/test/resources/config/locals.properties");
-        addBeanClass(ConnectorEmittingOnContext.class);
-        addBeanClass(ConnectorEmittingDirectly.class);
-        addBeanClass(PipelineWithAnUnorderedBlockingStage.class);
-        initialize();
-
-        PipelineWithAnUnorderedBlockingStage bean = get(PipelineWithAnUnorderedBlockingStage.class);
-        await().atMost(2, TimeUnit.MINUTES).until(() -> bean.getResults().size() >= 5);
+        PipelineWithAnUnorderedBlockingStage bean = runApplication(dataconfig(), PipelineWithAnUnorderedBlockingStage.class);
+        await().until(() -> bean.getResults().size() >= 5);
         assertThat(bean.getResults()).containsExactlyInAnyOrder(2, 3, 4, 5, 6);
 
     }
 
-    @RepeatedTest(100)
+    @Test
     public void testPipelineWithMultipleBlockingStages() {
-        installConfig("src/test/resources/config/locals.properties");
-        addBeanClass(ConnectorEmittingOnContext.class);
-        addBeanClass(ConnectorEmittingDirectly.class);
-        addBeanClass(PipelineWithMultipleBlockingStages.class);
-        initialize();
 
-        PipelineWithMultipleBlockingStages bean = get(PipelineWithMultipleBlockingStages.class);
-        await().atMost(2, TimeUnit.MINUTES).until(() -> bean.getResults().size() >= 5);
+        PipelineWithMultipleBlockingStages bean = runApplication(dataconfig(), PipelineWithMultipleBlockingStages.class);
+        await().until(() -> bean.getResults().size() >= 5);
         assertThat(bean.getResults()).containsExactlyInAnyOrder(2, 3, 4, 5, 6);
     }
 
-    @RepeatedTest(100)
+    @Test
     public void testPipelineWithBroadcastAndMerge() {
-        installConfig("src/test/resources/config/locals.properties");
-        addBeanClass(ConnectorEmittingOnContext.class);
-        addBeanClass(ConnectorEmittingDirectly.class);
-        addBeanClass(PipelineWithBroadcastAndMerge.class);
-        initialize();
-
-        PipelineWithBroadcastAndMerge bean = get(PipelineWithBroadcastAndMerge.class);
-        await().atMost(2, TimeUnit.MINUTES).until(() -> bean.getResults().size() >= 10);
+        PipelineWithBroadcastAndMerge bean = runApplication(dataconfig(), PipelineWithBroadcastAndMerge.class);
+        await().until(() -> bean.getResults().size() >= 10);
         assertThat(bean.getResults()).hasSize(10).contains(2, 3, 4, 5, 6);
     }
 
-    @RepeatedTest(20)
+    @Test
     public void testLinearPipelineWithAckOnCustomThread() {
-        installConfig("src/test/resources/config/locals.properties");
-        addBeanClass(ConnectorEmittingOnContext.class);
-        addBeanClass(ConnectorEmittingDirectly.class);
-        addBeanClass(LinearPipelineWithAckOnCustomThread.class);
-        initialize();
-
-        LinearPipelineWithAckOnCustomThread bean = get(LinearPipelineWithAckOnCustomThread.class);
-        await().atMost(2, TimeUnit.MINUTES).until(() -> bean.getResults().size() >= 5);
+        LinearPipelineWithAckOnCustomThread bean = runApplication(dataconfig(), LinearPipelineWithAckOnCustomThread.class);
+        await().until(() -> bean.getResults().size() >= 5);
         assertThat(bean.getResults()).containsExactly(2, 3, 4, 5, 6);
 
-    }
-
-    @Connector("connector-emitting-on-context")
-    public static class ConnectorEmittingOnContext implements InboundConnector {
-
-        @Inject
-        ExecutionHolder executionHolder;
-
-        @Override
-        public Publisher<? extends Message<?>> getPublisher(Config config) {
-            Context context = executionHolder.vertx().getOrCreateContext();
-            return Multi.createFrom().items(1, 2, 3, 4, 5)
-                    .onItem()
-                    .transformToUniAndConcatenate(i -> Uni.createFrom().emitter(e -> context.runOnContext(() -> e.complete(i))))
-                    .map(Message::of)
-                    .map(ContextAwareMessage::withContextMetadata);
-        }
-    }
-
-    @Connector("connector-without-context")
-    public static class ConnectorEmittingDirectly implements InboundConnector {
-
-        @Override
-        public Publisher<? extends Message<?>> getPublisher(Config config) {
-            return Multi.createFrom().items(1, 2, 3, 4, 5)
-                    .map(Message::of)
-                    .onItem().transformToUniAndConcatenate(i -> Uni.createFrom().emitter(e -> e.complete(i)));
-        }
     }
 
     @ApplicationScoped
@@ -556,45 +487,6 @@ public class LocalPropagationTest extends WeldTestBaseWithoutTails {
 
             int p = Vertx.currentContext().getLocal("input");
             assertThat(p + 1).isEqualTo(val);
-            list.add(val);
-        }
-
-        public List<Integer> getResults() {
-            return list;
-        }
-    }
-
-    @ApplicationScoped
-    public static class LinearPipelineNoContext {
-
-        private final List<Integer> list = new CopyOnWriteArrayList<>();
-        private final Set<String> uuids = new ConcurrentHashSet<>();
-
-        @Incoming("data-no-context")
-        @Outgoing("process")
-        @Acknowledgment(Acknowledgment.Strategy.MANUAL)
-        public Message<Integer> process(Message<Integer> input) {
-            assertThat(Vertx.currentContext()).isNull();
-            return input.withPayload(input.getPayload() + 1);
-        }
-
-        @Incoming("process")
-        @Outgoing("after-process")
-        public Integer handle(int payload) {
-            assertThat(Vertx.currentContext()).isNull();
-            return payload;
-        }
-
-        @Incoming("after-process")
-        @Outgoing("sink")
-        public Integer afterProcess(int payload) {
-            assertThat(Vertx.currentContext()).isNull();
-            return payload;
-        }
-
-        @Incoming("sink")
-        public void sink(int val) {
-            assertThat(Vertx.currentContext()).isNull();
             list.add(val);
         }
 

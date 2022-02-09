@@ -27,7 +27,7 @@ public class LocalContextMetadata {
     }
 
     public static Map<Object, Object> getContextualData(Message<?> message) {
-        return message.getMetadata(LocalContextMetadata.class)
+        return message.getMetadata().get(LocalContextMetadata.class)
                 .map(c -> (Map<Object, Object>) c.context().localContextData())
                 .orElse(Collections.emptyMap());
     }
@@ -51,7 +51,7 @@ public class LocalContextMetadata {
 
     public static <T> Uni<T> invokeOnMessageContext(Message<?> incoming,
             BiConsumer<Message<?>, UniEmitter<? super T>> function) {
-        Optional<LocalContextMetadata> metadata = incoming != null ? incoming.getMetadata(LocalContextMetadata.class)
+        Optional<LocalContextMetadata> metadata = incoming != null ? incoming.getMetadata().get(LocalContextMetadata.class)
                 : Optional.empty();
         if (metadata.isPresent()) {
             // Call function on Message's context
