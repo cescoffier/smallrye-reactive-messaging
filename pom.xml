@@ -76,7 +76,7 @@
     <smallrye-testing.version>0.1.0</smallrye-testing.version>
     <smallrye-fault-tolerance.version>5.2.1</smallrye-fault-tolerance.version>
 
-    <micrometer.version>1.8.1</micrometer.version>
+    <micrometer.version>1.8.4</micrometer.version>
 
     <mutiny.version>1.1.2</mutiny.version>
     <artemis.version>2.19.0</artemis.version>
@@ -85,7 +85,7 @@
 
     <kafka.version>3.0.0</kafka.version>
 
-    <opentelemetry.version>1.9.1</opentelemetry.version>
+    <opentelemetry.version>1.12.0</opentelemetry.version>
     <opentelemetry-semver.version>1.10.0-alpha-rc.1</opentelemetry-semver.version>
 
     <smallrye-vertx-mutiny-clients.version>2.15.1</smallrye-vertx-mutiny-clients.version>
