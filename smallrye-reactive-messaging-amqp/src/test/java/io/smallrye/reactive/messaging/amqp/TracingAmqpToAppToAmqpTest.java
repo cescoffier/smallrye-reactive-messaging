@@ -75,6 +75,7 @@ public class TracingAmqpToAppToAmqpTest extends AmqpBrokerTestBase {
         if (container != null) {
             container.close();
         }
+        GlobalOpenTelemetry.resetForTest();
         // Release the config objects
         SmallRyeConfigProviderResolver.instance().releaseConfig(ConfigProvider.getConfig());
     }

@@ -332,6 +332,9 @@ public class CloudEventProductionTest extends AmqpBrokerTestBase {
         AmqpSender bean = container.getBeanManager().createInstance().select(AmqpSender.class).get();
         Emitter<JsonObject> emitter = bean.get();
 
+        await().until(() -> isAmqpConnectorReady(container));
+        await().until(() -> isAmqpConnectorAlive(container));
+
         List<io.vertx.mutiny.amqp.AmqpMessage> list = new ArrayList<>();
         usage.consume(address, list::add);
 
@@ -376,6 +379,9 @@ public class CloudEventProductionTest extends AmqpBrokerTestBase {
         container = weld.initialize();
         AmqpSender bean = container.getBeanManager().createInstance().select(AmqpSender.class).get();
         Emitter<JsonObject> emitter = bean.get();
+
+        await().until(() -> isAmqpConnectorReady(container));
+        await().until(() -> isAmqpConnectorAlive(container));
 
         List<io.vertx.mutiny.amqp.AmqpMessage> list = new ArrayList<>();
         usage.consume(address, list::add);
